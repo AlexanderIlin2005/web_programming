@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная №1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+    <h1>Ильин Александр Алексеевич</h1>
+    <h3>Группа Веб - прогр 1.11 (Р3216), Вариант 381032</h3>
+</div>
+
+<div class="container">
+    <div class="left-block" id="graph">
+        <section class="block plot-section">
+            <div class="graph">
+                <svg height="300" width="300" xmlns="http://www.w3.org/2000/svg">
+
+                    <!-- Оси со стрелками -->
+                    <line stroke="gray" x1="0" x2="300" y1="150" y2="150"></line>
+                    <line stroke="gray" x1="150" x2="150" y1="0" y2="300"></line>
+                    <polygon fill="white" points="150,0 144,15 156,15" stroke="white"></polygon>
+                    <polygon fill="white" points="300,150 285,156 285,144" stroke="white"></polygon>
+
+                    <!-- Засечки -->
+                    <line stroke="gray" x1="200" x2="200" y1="155" y2="145"></line>
+                    <line stroke="gray" x1="250" x2="250" y1="155" y2="145"></line>
+
+                    <line stroke="gray" x1="50" x2="50" y1="155" y2="145"></line>
+                    <line stroke="gray" x1="100" x2="100" y1="155" y2="145"></line>
+
+                    <line stroke="gray" x1="145" x2="155" y1="100" y2="100"></line>
+                    <line stroke="gray" x1="145" x2="155" y1="50" y2="50"></line>
+
+                    <line stroke="gray" x1="145" x2="155" y1="200" y2="200"></line>
+                    <line stroke="gray" x1="145" x2="155" y1="250" y2="250"></line>
+
+                    <!-- Подписи к засечкам -->
+                    <text fill="white" x="195" y="140">R/2</text>
+                    <text fill="white" x="248" y="140">R</text>
+
+                    <text fill="white" x="40" y="140">-R</text>
+                    <text fill="white" x="90" y="140">-R/2</text>
+
+                    <text fill="white" x="160" y="105">R/2</text>
+                    <text fill="white" x="160" y="55">R</text>
+
+                    <text fill="white" x="160" y="205">-R/2</text>
+                    <text fill="white" x="160" y="255">-R</text>
+
+                    <text fill="white" x="160" y="10">Y</text>
+                    <text fill="white" x="290" y="140">X</text>
+
+                    <!-- Прямоугольник -->
+                    <rect x="50" y="50" width="100" height="100" fill="#0000FF" fill-opacity="0.2" stroke="#0000FF"></rect>
+
+                    <!-- Треугольник (с вершинами (0, 0), (R/2, 0), (0, R/2)) -->
+                    <polygon fill="#0000FF" fill-opacity="0.2" points="150,150 200,150 150,100" stroke="#0000FF"></polygon>
+
+                    <!-- Четверть окружности с центром в (150, 150) и радиусом R -->
+                    <path d="M 150 150 L 250 150 A 100 100 0 0 1 150 250 Z" fill-opacity="0.2" fill="#0000FF" stroke="#0000FF"></path>
+
+                    <!-- Центр оси координат -->
+                    <circle cx="150" cy="150" id="target-dot" r="0" stroke="white" fill="white"></circle>
+                </svg>
+            </div>
+        </section>
+    </div>
+
+    <div class="right-block">
+        <h4 class="input">Выберите X</h4>
+        <div id="checkboxes"></div>
+
+        <h4 class="input">Введите Y</h4>
+        <input type="number" id="yInput" step="1" min="-5" max="3" placeholder="Введите Y" />
+        
+        <h4 class="input">Выберите R</h4>
+        <select id="rSelect" onchange="updateCircle()">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+
+        <button id="getButton" value="1">Проверить</button>
+    </div>
+</div>
+
+<h1 class="results">Результаты</h1>
+
+<div id="table">
+    <table id="resultsTable" border="1">
+        <tr>
+            <th><h2 class="headerOfTable">X</h2></th>
+            <th><h2 class="headerOfTable">Y</h2></th>
+            <th><h2 class="headerOfTable">R</h2></th>
+            <th><h2 class="headerOfTable">Ответ</h2></th>
+            <th><h2 class="headerOfTable">Время выполнения (наносекунды)</h2></th>
+            <th><h2 class="headerOfTable">Время на сервере</h2></th>
+        </tr>
+    </table>
+</div>
+<script charset="utf-8" type="text/javascript">
+    // Создаем список чисел от -3 до 5
+    const numbers = [-3, -2, -1, 0, 1, 2, 3, 4, 5];
+    let x = -10;
+    let y = 10;
+    let r = 0;
+
+    // Функция для создания и добавления чекбоксов
+    function createCheckboxes() {
+        const checkboxContainer = document.getElementById('checkboxes');
+        numbers.forEach(number => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = number;
+            checkbox.id = `checkbox-${number}`;
+            checkbox.onclick = function() {
+                x = checkbox.checked ? number : -10; // Если чекбокс активен, используем его значение, иначе -10
+            };
+
+            const label = document.createElement('label');
+            label.htmlFor = `checkbox-${number}`;
+            label.innerText = number;
+
+            checkboxContainer.appendChild(checkbox);
+            checkboxContainer.appendChild(label);
+        });
+    }
+
+    createCheckboxes();
+
+    function isEmptyString(str) {
+        return (!str || str.length === 0);
+    }
+
+    function sendRequest() {
+        // Здесь можно отправить запрос на сервер
+        // Предполагается, что ответ будет в формате JSON
+        const result = '{"answer": "Внутри", "serverTime": "10мс", "executionTime": "5мс"}'; // Пример ответа
+
+        // Обработка результата
+        const newRow = document.getElementById("resultsTable").insertRow(-1);
+        const answerCell = newRow.insertCell(0);
+        const xCell = newRow.insertCell(1);
+        const yCell = newRow.insertCell(2);
+        const rCell = newRow.insertCell(3);
+        const executionTimeCell = newRow.insertCell(4);
+        const serverTimeCell = newRow.insertCell(5);
+
+        xCell.innerText = x;
+        yCell.innerText = y;
+        rCell.innerText = r;
+
+        const jsonResult = JSON.parse(result);
+        serverTimeCell.innerText = jsonResult.serverTime; 
+        executionTimeCell.innerText = jsonResult.executionTime; 
+        answerCell.innerText = jsonResult.answer; // Ответ с сервера
+    }
+
+    document.getElementById("getButton").onclick = async function() {
+        y = document.getElementById("yInput").value;
+
+        r = parseInt(document.getElementById("rSelect").value);
+        if (("Notification" in window) && (Notification.permission !== "denied")) {
+            await Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    if (x === -10) {
+                        const notification = new Notification("Некорректное значение для x", {
+                            body: "Выберите одно из предложенных значений для X",
+                            icon: ""
+                        });
+                        return;
+                    } else if (isEmptyString(y) || y < -5 || y > 3) {
+                        const notification = new Notification("Некорректное значение для y", {
+                            body: "Y должен быть целым числом от -5 до 3",
+                            icon: ""
+                        });
+                        return;
+                    } else if (r === 0) {
+                        const notification = new Notification("Некорректное значение для R", {
+                            body: "Выберите одно из предложенных значений для R",
+                            icon: ""
+                        });
+                        return;
+                    } else {
+                        sendRequest();
+                    }
+                } else {
+                    console.log("Разрешение на уведомления не получено.");
+                }
+            });
+        } else {
+            console.log("Ваш браузер не поддерживает уведомления.");
+        }
+    }
+</script>
+</body>
+</html>
