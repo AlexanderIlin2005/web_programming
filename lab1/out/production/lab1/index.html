@@ -5,7 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лабораторная №1</title>
     <link rel="stylesheet" href="style.css">
-    
+    <style>
+        .checkbox-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkbox-container label {
+            margin-left: 5px;
+        }
+        body {
+            background-color: #202020;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+        }
+        .left-block, .right-block {
+            padding: 15px;
+            border: 2px solid #3e3e3e;
+            border-radius: 10px;
+        }
+        .graph {
+            background-color: #2d2d2d;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .input {
+            margin: 10px 0;
+        }
+        #resultsTable {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <div class="header">
@@ -198,56 +248,67 @@
             });
     }
 
-    document.getElementById("getButton").onclick = async function () {
-    // Получаем значения X, Y, R из соответствующих элементов
-    y = document.getElementById("yInput").value;
-    r = document.getElementById("rSelect").value;
-
-    if ("Notification" in window) {
-        // Запрашиваем у пользователя разрешение на отображение уведомлений
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                // Проверяем значения X, Y и R перед отправкой запроса
-                if (x === null || x < -3 || x > 5) {
-                    // Создаем уведомление для некорректного значения X
-                    const notification = new Notification("Некорректное значение для X", {
-                        body: "X должен быть целым числом от -3 до 5",
-                    });
-                    notification.onclick = () => {
-                        window.open(window.location.href);
-                    };
-                    return;
-                } else if (isEmptyString(y) || y < -5 || y > 3) {
-                    // Создаем уведомление для некорректного значения Y
-                    const notification = new Notification("Некорректное значение для Y", {
-                        body: "Y должен быть числом в диапазоне от -5 до 3",
-                    });
-                    notification.onclick = () => {
-                        window.open(window.location.href);
-                    };
-                    return;
-                } else if (r === 0) {
-                    // Создаем уведомление для некорректного значения R
-                    const notification = new Notification("Некорректное значение для R", {
-                        body: "Выберите одно из предложенных значений для R",
-                    });
-                    notification.onclick = () => {
-                        window.open(window.location.href);
-                    };
-                    return;
-                } else {
-                    // Если все значения корректны, отправляем запрос
-                    sendRequest();
-                }
-            } else {
-                console.log("Разрешение на уведомления не получено.");
-            }
-        });
-    } else {
-        console.log("Ваш браузер не поддерживает уведомления.");
+    function isEmptyString(str) {
+        return !str || !str.trim();
     }
-};
 
+    document.getElementById("getButton").onclick = async function () {
+        x = document.getElementById("xInput").value;
+        // let y = document.getElementById("yInput").value;
+        const radios = document.getElementsByName('number');
+        // Ищем выбранное значение
+        for (const radio of radios) {
+            if (radio.checked) {
+                r = radio.value;
+                break;
+            }
+        }
+
+        if ("Notification" in window) {
+            // Запрашиваем у пользователя разрешение на отображение уведомлений
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    if (isEmptyString(x) || x < -3 || x > 5) {
+                        // Создаем уведомление
+                        const notification = new Notification("Некорректное значение для x", {
+                            body: "X должен быть целым числом от -3 до 5",
+                            icon: "URL_вашего_значка" // Укажите URL значка (опционально)
+                        });
+                        notification.onclick = () => {
+                            window.open(window.location.href); // Открывает сайт при клике
+                        };
+                        return;
+                    } else if (y === 10) {
+                        // Создаем уведомление
+                        const notification = new Notification("Некорректное значение для y", {
+                            body: "Выберите одно из предложенных значений для Y",
+                            icon: "URL_вашего_значка" // Укажите URL значка (опционально)
+                        });
+                        notification.onclick = () => {
+                            window.open(window.location.href); // Открывает сайт при клике
+                        };
+                        return;
+                    } else if (r === 0) {
+                        // Создаем уведомление
+                        const notification = new Notification("Некорректное значение для R", {
+                            body: "Выберите одно из предложенных значений для R",
+                            icon: "URL_вашего_значка" // Укажите URL значка (опционально)
+                        });
+                        notification.onclick = () => {
+                            window.open(window.location.href); // Открывает сайт при клике
+                        };
+                        return;
+                    } else {
+                        sendRequest()
+                    }
+                } else {
+                    console.log("Разрешение на уведомления не получено.");
+                }
+            });
+        } else {
+            console.log("Ваш браузер не поддерживает уведомления.");
+        }
+    }
 </script>
 </body>
 </html>

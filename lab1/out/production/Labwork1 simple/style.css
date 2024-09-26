@@ -61,13 +61,6 @@ table {
     padding: 10px;
 }
 
-#resultsTable {
-            width: 100%;
-            margin-top: 20px;
-            text-align: center;
-            color: white;
-        }
-
 /*Селекторы идентификаторов*/
 #graph {
     width: 30%;
@@ -122,5 +115,3 @@ h4.input{
     font-family: "Lucida Console", Courier, monospace;
     text-align: center;
 }
-
-

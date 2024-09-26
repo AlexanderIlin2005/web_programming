@@ -40,8 +40,11 @@ class Main {
         """;
 
     public static void main(String[] args) throws IOException {
+        System.out.println("Hello from Java");
         var fcgiInterface = new FCGIInterface();
+        System.out.println("fcgi interface");
         while (fcgiInterface.FCGIaccept() >= 0) {
+            System.out.println("Соединение");
             long startTime = System.nanoTime();
             try {
                 var queryParams = System.getProperties().getProperty("QUERY_STRING");
@@ -61,6 +64,8 @@ class Main {
                 int x = Integer.parseInt(params.getOrDefault("x", "Неизвестный"));
                 int y = Integer.parseInt(params.getOrDefault("y", "Неизвестный"));
                 r = Integer.parseInt(params.getOrDefault("r", "Неизвестный"));
+
+                System.out.println(x+' '+y+' '+r);
 
                 boolean insideRectangle = isInsideRectangle(x, y, -(r / 2), -r, r / 2, r);
                 boolean insidePolygon = isInsidePolygon(x, y);
